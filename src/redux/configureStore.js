@@ -9,7 +9,7 @@ export default function configureStore(initialState) {
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
   const logger = createLogger({
-    collapsed,
+    //...options
   });
 
   return createStore(
