@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as courseActions from "../../redux/actions/courseActions";
+import { bindActionCreators } from "redux";
+
 class CoursesPage extends React.Component {
   constructor(props) {
     super();
@@ -19,8 +21,9 @@ class CoursesPage extends React.Component {
 
   handleSubmit = (event) => {
     event.preventDefault();
-    // this.props.dispatch(courseActions.createCourse(this.state.course));
-    this.props.createCourse(this.state.course);
+    // this.props.dispatch(courseActions.createCourse(this.state.course)); // 1
+    // this.props.createCourse(this.state.course); // 2.
+    this.props.actions.createCourse(this.state.course); // 3.
     // console.log("successfully submitted");
   };
 
@@ -44,8 +47,9 @@ class CoursesPage extends React.Component {
 }
 
 CoursesPage.propTypes = {
-  // dispatch: PropTypes.func.isRequired,
-  createCourse: PropTypes.func.isRequired,
+  // dispatch: PropTypes.func.isRequired, // 1.
+  // createCourse: PropTypes.func.isRequired, // 2.
+  actions: PropTypes.object.isRequired, // 3.
   courseReducer: PropTypes.array.isRequired,
 };
 
@@ -55,7 +59,8 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    createCourse: (course) => dispatch(courseActions.createCourse(course)),
+    // createCourse: (course) => dispatch(courseActions.createCourse(course)), // 1.
+    actions: bindActionCreators(courseActions, dispatch), // 3.
   };
 }
 
