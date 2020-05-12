@@ -3,45 +3,21 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as courseActions from "../../redux/actions/courseActions";
 import { bindActionCreators } from "redux";
+import CourseList from "./CourseList";
 
 class CoursesPage extends React.Component {
-  constructor(props) {
-    super();
-    this.state = {
-      course: {
-        title: "",
-      },
-    };
+  componentDidMount() {
+    this.props.actions.loadCourses().catch((error) => {
+      alert("Loading courses failure" + error);
+    });
   }
-
-  handleChange = (event) => {
-    const course = { ...this.state.course, title: event.target.value };
-    this.setState({ course: course });
-  };
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-    // this.props.dispatch(courseActions.createCourse(this.state.course)); // 1
-    // this.props.createCourse(this.state.course); // 2.
-    this.props.actions.createCourse(this.state.course); // 3.
-    // console.log("successfully submitted");
-  };
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
+      <div>
         <h2>Courses</h2>
-        <h3>Add Course</h3>
-        <input
-          type="text"
-          onChange={this.handleChange}
-          value={this.state.course.title}
-        />
-        <input type="submit" value="Save" />
-        {this.props.courseReducer.map((course) => (
-          <div key={course.title}>{course.title}</div>
-        ))}
-      </form>
+        <CourseList courses={this.props.courseReducer} />
+      </div>
     );
   }
 }
