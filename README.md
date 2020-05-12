@@ -9,5 +9,6 @@
 5. open **catalogue-course** in your chosen editor. For **vscode** enter `code .` on terminal and press enter.
 6. On the terminal enter: `git checkout develop`
 7. On the terminal enter: `yarn install`
+8. Open the terminal on the develop branch and enter `yarn start:api` this starts the Mock API.
 
-8. On the terminal enter: `yarn start` the app in the development mode to open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+9. Open a second terminal on the develop branch and enter: `yarn start` the app in the development mode to open [http://localhost:3000](http://localhost:3000) to view it in the browser.
