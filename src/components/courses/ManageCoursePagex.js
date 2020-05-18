@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loadCourses } from "../../redux/actions/courseActions";
-import { loadAuthors } from "../../redux/actions/authorActions";
-import PropTypes from "prop-types";
-import CourseForm from "./CourseForm";
+import * as authorActions from "../../redux/actions/authorActions";
 import { newCourse } from "../../tools/mockData";
+import CourseForm from "./CourseForm";
 
 function ManageCoursePage({
   courseReducer,
   authorReducer,
-  loadAuthors,
   loadCourses,
   ...props
 }) {
@@ -19,54 +18,46 @@ function ManageCoursePage({
   useEffect(() => {
     if (courseReducer.length === 0) {
       loadCourses().catch((error) => {
-        alert("Loading courseReducer failed" + error);
+        alert("Loading courses failure" + error);
       });
     }
 
     if (authorReducer.length === 0) {
-      loadAuthors().catch((error) => {
-        alert("Loading authorReducer failed" + error);
+      this.props.actions.loadAuthors().catch((error) => {
+        alert(`Loading authors failure${error}`);
       });
     }
   }, []);
 
-  function handleChange(event) {
-    const { name, value } = event.target;
-    setCourse((prevCourse) => ({
-      ...prevCourse,
-      [name]: name === "authorId" ? parseInt(value, 10) : value,
-    }));
-  }
-
   return (
     <div>
-      <CourseForm
-        course={course}
-        errors={errors}
-        authors={authorReducer}
-        onChange={handleChange}
-      />
+      <CourseForm course={course} error={errors} authors={authorReducer} />
     </div>
   );
 }
 
 ManageCoursePage.propTypes = {
   course: PropTypes.object.isRequired,
-  authorReducer: PropTypes.array.isRequired,
+  actions: PropTypes.object.isRequired, // 3.
   courseReducer: PropTypes.array.isRequired,
+  authorReducer: PropTypes.array.isRequired,
 };
 
 function mapStateToProps(state, ownProps) {
   return {
-    course: newCourse,
-    courseReducer: state.courseReducer,
+    Course: newCourse,
+    courseReducer: state.authorReducer,
     authorReducer: state.authorReducer,
   };
 }
 
-const mapDispatchToProps = {
-  loadCourses,
-  loadAuthors,
-};
+function mapDispatchToProps(dispatch) {
+  return {
+    actions: {
+      loadCourses: loadCourses,
+      loadAuthors: authorActions.loadAuthors,
+    },
+  };
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(ManageCoursePage);
