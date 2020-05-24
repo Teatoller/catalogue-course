@@ -7,8 +7,8 @@ import CourseForm from "./CourseForm";
 import { newCourse } from "../../tools/mockData";
 
 function ManageCoursePage({
-  courseReducer,
-  authorReducer,
+  courses,
+  authors,
   loadAuthors,
   loadCourses,
   saveCourse,
@@ -19,15 +19,15 @@ function ManageCoursePage({
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
-    if (courseReducer.length === 0) {
+    if (courses.length === 0) {
       loadCourses().catch((error) => {
-        alert("Loading courseReducer failed" + error);
+        alert("Loading courses failed" + error);
       });
     }
 
-    if (authorReducer.length === 0) {
+    if (authors.length === 0) {
       loadAuthors().catch((error) => {
-        alert("Loading authorReducer failed" + error);
+        alert("Loading authors failed" + error);
       });
     }
   }, []);
@@ -52,7 +52,7 @@ function ManageCoursePage({
       <CourseForm
         course={course}
         errors={errors}
-        authors={authorReducer}
+        authors={authors}
         onChange={handleChange}
         onSave={handleSave}
       />
@@ -62,28 +62,28 @@ function ManageCoursePage({
 
 ManageCoursePage.propTypes = {
   course: PropTypes.object.isRequired,
-  authorReducer: PropTypes.array.isRequired,
-  courseReducer: PropTypes.array.isRequired,
+  authors: PropTypes.array.isRequired,
+  courses: PropTypes.array.isRequired,
   loadCourses: PropTypes.func.isRequired,
   loadAuthors: PropTypes.func.isRequired,
   saveCourse: PropTypes.func.isRequired,
   history: PropTypes.object.isRequired,
 };
 
-export function getCourseBySlug(courseReducer, slug) {
-  return courseReducer.find((course) => course.slug === slug) || null;
+export function getCourseBySlug(courses, slug) {
+  return courses.find((course) => course.slug === slug) || null;
 }
 
 function mapStateToProps(state, ownProps) {
   const slug = ownProps.match.params.slug;
   const course =
-    slug && state.courseReducer.length > 0
-      ? getCourseBySlug(state.courseReducer, slug)
+    slug && state.courses.length > 0
+      ? getCourseBySlug(state.courses, slug)
       : newCourse;
   return {
     course: course,
-    courseReducer: state.courseReducer,
-    authorReducer: state.authorReducer,
+    courses: state.courses,
+    authors: state.authors,
   };
 }
 
