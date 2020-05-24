@@ -7,6 +7,7 @@ import { bindActionCreators } from "redux";
 import CourseList from "./CourseList";
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 import Spinner from "../common/Spinner";
+import { toast } from "react-toastify";
 
 class CoursesPage extends React.Component {
   state = {
@@ -27,14 +28,31 @@ class CoursesPage extends React.Component {
     }
   }
 
+  // handleDeleteCourse = (course) => {
+  //   toast.success("Course Deleted");
+  //   this.props.actions.deleteCourse(course).catch((error) => {
+  //     toast.error("Delete Failed" + error.message, { autoClose: false });
+  //   });
+  // };
+
+  // Modify to use async await
+  handleDeleteCourse = async (course) => {
+    toast.success("Course Deleted");
+    try {
+      await this.props.actions.deleteCourse(course);
+    } catch (error) {
+      toast.error("Delete Failed" + error.message, { autoClose: false });
+    }
+  };
+
   render() {
     return (
       <div>
         <h2>Courses</h2>
         {this.state.redirectToAddCoursePage && <Redirect to="/course" />}
-        {this.props.loading ? 
+        {this.props.loading ? (
           <Spinner />
-         : (
+        ) : (
           <div>
             <button
               style={{ marginBottom: 20 }}
@@ -43,7 +61,10 @@ class CoursesPage extends React.Component {
             >
               Add Course
             </button>
-            <CourseList courses={this.props.courses} />
+            <CourseList
+              onDeleteClick={this.handleDeleteCourse}
+              courses={this.props.courses}
+            />
           </div>
         )}
       </div>
@@ -68,9 +89,8 @@ function mapStateToProps(state, ownProps) {
         : state.courses.map((course) => {
             return {
               ...course,
-              authorName: state.authors.find(
-                (a) => a.id === course.authorId
-              ).name,
+              authorName: state.authors.find((a) => a.id === course.authorId)
+                .name,
             };
           }),
     authors: state.authors,
@@ -85,6 +105,7 @@ function mapDispatchToProps(dispatch) {
     actions: {
       loadCourses: bindActionCreators(courseActions.loadCourses, dispatch), // 4.
       loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch), // 4.
+      deleteCourse: bindActionCreators(courseActions.deleteCourse, dispatch),
     },
   };
 }
