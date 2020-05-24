@@ -4,9 +4,7 @@ import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
 import { loadAuthors } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import CourseForm from "./CourseForm";
-import { newCourse } from "../../tools/mockData"
-// import Spinner from "../common/Spinner";
-// import { toast } from "react-toastify";
+import { newCourse } from "../../tools/mockData";
 
 function ManageCoursePage({
   courseReducer,
@@ -19,23 +17,20 @@ function ManageCoursePage({
 }) {
   const [course, setCourse] = useState({ ...props.course });
   const [errors, setErrors] = useState({});
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (courseReducer.length === 0) {
       loadCourses().catch((error) => {
-        alert("Loading courses failed" + error);
+        alert("Loading courseReducer failed" + error);
       });
-    } else {
-      setCourse({ ...props.course });
     }
 
     if (authorReducer.length === 0) {
       loadAuthors().catch((error) => {
-        alert("Loading authors failed" + error);
+        alert("Loading authorReducer failed" + error);
       });
     }
-  }, [authorReducer.length, courseReducer.length, loadAuthors, loadCourses, props.course]);
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -45,32 +40,11 @@ function ManageCoursePage({
     }));
   }
 
-  function formIsValid() {
-    const { title, authorId, category } = course;
-    const errors = {};
-
-    if (!title) errors.title = "Title is required.";
-    if (!authorId) errors.author = "Author is required";
-    if (!category) errors.category = "Category is required";
-
-    setErrors(errors);
-    // Form is valid if the errors object still has no properties
-    return Object.keys(errors).length === 0;
-  }
-
   function handleSave(event) {
     event.preventDefault();
-    if (!formIsValid()) return;
-    setSaving(true);
-    saveCourse(course)
-      .then(() => {
-        // toast.success("Course saved.");
-        history.push("/courses");
-      })
-      .catch((error) => {
-        setSaving(false);
-        setErrors({ onSave: error.message });
-      });
+    saveCourse(course).then(() => {
+      history.push("/courses");
+    });
   }
 
   return (
@@ -81,7 +55,6 @@ function ManageCoursePage({
         authors={authorReducer}
         onChange={handleChange}
         onSave={handleSave}
-        saving={saving}
       />
     </div>
   );
@@ -97,8 +70,8 @@ ManageCoursePage.propTypes = {
   history: PropTypes.object.isRequired,
 };
 
-export function getCourseBySlug(courses, slug) {
-  return courses.find((course) => course.slug === slug) || null;
+export function getCourseBySlug(courseReducer, slug) {
+  return courseReducer.find((course) => course.slug === slug) || null;
 }
 
 function mapStateToProps(state, ownProps) {
@@ -108,7 +81,7 @@ function mapStateToProps(state, ownProps) {
       ? getCourseBySlug(state.courseReducer, slug)
       : newCourse;
   return {
-    course,
+    course: course,
     courseReducer: state.courseReducer,
     authorReducer: state.authorReducer,
   };
