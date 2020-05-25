@@ -1,4 +1,6 @@
 export default {
-    courseReducer: [],
-    authorReducer: []
-}
+  courses: [],
+  authors: [],
+  apiCallsInProgress: 0,
+  // apiCallStatusReducer: 0,
+};

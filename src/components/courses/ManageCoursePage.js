@@ -4,13 +4,13 @@ import { loadCourses, saveCourse } from "../../redux/actions/courseActions";
 import { loadAuthors } from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import CourseForm from "./CourseForm";
-import { newCourse } from "../../tools/mockData"
-// import Spinner from "../common/Spinner";
-// import { toast } from "react-toastify";
+import { newCourse } from "../../tools/mockData";
+import Spinner from "../common/Spinner";
+import { toast } from "react-toastify";
 
 function ManageCoursePage({
-  courseReducer,
-  authorReducer,
+  courses,
+  authors,
   loadAuthors,
   loadCourses,
   saveCourse,
@@ -22,7 +22,7 @@ function ManageCoursePage({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (courseReducer.length === 0) {
+    if (courses.length === 0) {
       loadCourses().catch((error) => {
         alert("Loading courses failed" + error);
       });
@@ -30,12 +30,12 @@ function ManageCoursePage({
       setCourse({ ...props.course });
     }
 
-    if (authorReducer.length === 0) {
+    if (authors.length === 0) {
       loadAuthors().catch((error) => {
         alert("Loading authors failed" + error);
       });
     }
-  }, [authorReducer.length, courseReducer.length, loadAuthors, loadCourses, props.course]);
+  }, [authors.length, courses.length, loadAuthors, loadCourses, props.course]);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -64,7 +64,7 @@ function ManageCoursePage({
     setSaving(true);
     saveCourse(course)
       .then(() => {
-        // toast.success("Course saved.");
+        toast.success("Course saved.");
         history.push("/courses");
       })
       .catch((error) => {
@@ -75,22 +75,26 @@ function ManageCoursePage({
 
   return (
     <div>
-      <CourseForm
-        course={course}
-        errors={errors}
-        authors={authorReducer}
-        onChange={handleChange}
-        onSave={handleSave}
-        saving={saving}
-      />
+      {authors.length === 0 || courses.length === 0 ? (
+        <Spinner />
+      ) : (
+        <CourseForm
+          course={course}
+          errors={errors}
+          authors={authors}
+          onChange={handleChange}
+          onSave={handleSave}
+          saving={saving}
+        />
+      )}
     </div>
   );
 }
 
 ManageCoursePage.propTypes = {
   course: PropTypes.object.isRequired,
-  authorReducer: PropTypes.array.isRequired,
-  courseReducer: PropTypes.array.isRequired,
+  authors: PropTypes.array.isRequired,
+  courses: PropTypes.array.isRequired,
   loadCourses: PropTypes.func.isRequired,
   loadAuthors: PropTypes.func.isRequired,
   saveCourse: PropTypes.func.isRequired,
@@ -104,13 +108,13 @@ export function getCourseBySlug(courses, slug) {
 function mapStateToProps(state, ownProps) {
   const slug = ownProps.match.params.slug;
   const course =
-    slug && state.courseReducer.length > 0
-      ? getCourseBySlug(state.courseReducer, slug)
+    slug && state.courses.length > 0
+      ? getCourseBySlug(state.courses, slug)
       : newCourse;
   return {
     course,
-    courseReducer: state.courseReducer,
-    authorReducer: state.authorReducer,
+    courses: state.courses,
+    authors: state.authors,
   };
 }
 

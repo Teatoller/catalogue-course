@@ -1,8 +1,8 @@
 import * as types from "../constants/courseActionTypes";
 import initialState from "./initialState";
 
-export default function authorReducer(
-  state = initialState.authorReducer,
+export default function authors(
+  state = initialState.authors,
   action
 ) {
   switch (action.type) {

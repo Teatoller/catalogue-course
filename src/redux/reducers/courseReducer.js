@@ -1,10 +1,7 @@
 import * as types from "../constants/courseActionTypes";
 import initialState from "./initialState";
 
-export default function courseReducer(
-  state = initialState.courseReducer,
-  action
-) {
+export default function courses(state = initialState.courses, action) {
   switch (action.type) {
     case types.CREATE_COURSE_SUCCESS:
       return [...state, { ...action.course }];
@@ -14,6 +11,8 @@ export default function courseReducer(
       );
     case types.LOAD_COURSES_SUCCESS:
       return action.courses;
+    case types.DELETE_COURSE_OPTIMISTIC:
+      return state.filter((course) => course.id !== action.course.id);
 
     default:
       return state;
